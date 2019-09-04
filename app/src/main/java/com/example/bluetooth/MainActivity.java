@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 0x2; //权限请求
     private final static int REQUEST_CONNECT_DEVICE = 0x3;    //宏定义查询设备句柄
 
-    private com.xw.repo.BubbleSeekBar main_seekBar1,main_seekBar2,main_seekBar3,main_seekBar4,main_seekBar5;
-    private Button bt_main_send,bt_main_receive;
+    private com.xw.repo.BubbleSeekBar main_seekBar1, main_seekBar2, main_seekBar3, main_seekBar4, main_seekBar5;
+    private Button bt_main_send, bt_main_receive;
 
     private String str_nowDeviceName;
 
@@ -65,12 +65,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1://蓝牙连接成功
-                    str_nowDeviceName = (String)msg.obj;
+                    str_nowDeviceName = (String) msg.obj;
                     Toast.makeText(MainActivity.this, "连接设备成功！设备名称 : " +
                             str_nowDeviceName, Toast.LENGTH_SHORT).show();
-                    main_toolBar_tv.setText("当前设备："+str_nowDeviceName);
+                    main_toolBar_tv.setText("当前设备：" + str_nowDeviceName);
                     bt_main_receive.setVisibility(View.VISIBLE);//显示接收按钮
                     bt_main_send.setVisibility(View.VISIBLE);//显示发送按钮
+                    clientReadRev();//蓝牙连接成功，开启接收数据线程
                     break;
                 case 2://蓝牙连接失败
                     str_nowDeviceName = " ";
@@ -81,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     main_toolBar_tv.setText((String) msg.obj);
                     break;
                 case 4://接收蓝牙数据
-                    main_toolBar_tv.setText("当前设备："+str_nowDeviceName);
-                    receiveDataAndShow((byte [] )msg.obj);
+                    main_toolBar_tv.setText("当前设备：" + str_nowDeviceName);
+                    receiveDataAndShow((byte[]) msg.obj);
                     break;
                 case 5://接收数据错误
                     main_toolBar_tv.setText((String) msg.obj);
@@ -96,18 +97,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void receiveDataAndShow(byte[] obj) {
-        if(WRITE == obj[0] && BTYE1 == obj[1] && BTYE2 == obj[2]){//校验前三位  接收数据
-            // tx1 = obj[3];
-            main_seekBar1.setProgress(obj[3]);
-            main_seekBar2.setProgress(obj[4]);
-            main_seekBar3.setProgress(obj[5]);
-            main_seekBar4.setProgress(obj[6]);
-            main_seekBar5.setProgress(obj[7]);
-        }else {
-            Toast.makeText(MainActivity.this,"数据格式发送错误", Toast.LENGTH_SHORT).show();
+        if (BTYEP == obj[1]) {
+            switch (obj[0]) {
+                case WRITE://设置参数的返回值
+                    if (BTYETX == obj[2] && (WRITE + BTYEP + BTYETX) == obj[3]) {
+                        Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case READ://读取参数的返回值
+                    byte sum = 0;
+                    for (int j = 0; j < 8; j++) {
+                        sum += obj[j];
+                    }
+                    if (BTYERX == obj[2] && sum == obj[8]) {//校验
+                        main_seekBar1.setProgress(obj[3]);
+                        main_seekBar2.setProgress(obj[4]);
+                        main_seekBar3.setProgress(obj[5]);
+                        main_seekBar4.setProgress(obj[6]);
+                        main_seekBar5.setProgress(obj[7]);
+                        Toast.makeText(MainActivity.this, "更新完毕", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        } else {
+            Toast.makeText(MainActivity.this, "数据格式发送错误", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
 
@@ -135,14 +157,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置全局蓝牙适配器
         myApplication.setMbluetoothAdapter(mbluetoothAdapter);
 
-        main_toolBar_tv = (TextView)findViewById(R.id.main_toolBar_tv);
+        main_toolBar_tv = (TextView) findViewById(R.id.main_toolBar_tv);
         actionView_set();//悬浮按钮的设置
         main_seekBar1 = (com.xw.repo.BubbleSeekBar) findViewById(R.id.main_seekBar1);
         main_seekBar2 = (com.xw.repo.BubbleSeekBar) findViewById(R.id.main_seekBar2);
         main_seekBar3 = (com.xw.repo.BubbleSeekBar) findViewById(R.id.main_seekBar3);
         main_seekBar4 = (com.xw.repo.BubbleSeekBar) findViewById(R.id.main_seekBar4);
         main_seekBar5 = (com.xw.repo.BubbleSeekBar) findViewById(R.id.main_seekBar5);
-        bt_main_send = (Button)findViewById(R.id.bt_main_send);
+        bt_main_send = (Button) findViewById(R.id.bt_main_send);
         bt_main_receive = (Button) findViewById(R.id.bt_main_receive);
 
 
@@ -158,62 +180,83 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void actionView_set() {
         final View actionB = findViewById(R.id.action_b);
+        final FloatingActionButton actionD = (FloatingActionButton) findViewById(R.id.action_d);
 
         FloatingActionButton actionC = new FloatingActionButton(getBaseContext());
         actionC.setTitle("隐藏/显示 按钮");
         actionC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               bt_main_send.setVisibility(bt_main_send.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-               bt_main_receive.setVisibility(bt_main_receive.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-           }
+                bt_main_send.setVisibility(bt_main_send.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                bt_main_receive.setVisibility(bt_main_receive.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE: View.GONE);
+                actionD.setVisibility(actionD.getVisibility() == View.GONE ? View.VISIBLE: View.GONE);
+            }
         });
 
         final FloatingActionsMenu menuMultipleActions = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
         menuMultipleActions.addButton(actionC);
 
         final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
+
         actionA.setOnClickListener(this);
         actionB.setOnClickListener(this);
-   }
+        actionD.setOnClickListener(this);
+    }
 
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
-            case R.id.bt_main_send:
-                Toast.makeText(MainActivity.this, "send " , Toast.LENGTH_SHORT).show();
-                bytes[0] = READ;
-                bytes[1] = BTYE1;
-                bytes[2] = BTYE2;
-                bytes[3] = (byte) (bytes[0] + bytes[1] + bytes[2]);
-                sendData(bytes,myApplication.getBluetoothSocket());
+        switch (view.getId()) {
+            case R.id.bt_main_send://设置参数
+                Toast.makeText(MainActivity.this, "设置参数", Toast.LENGTH_SHORT).show();
+                bytesW[0] = WRITE;
+                bytesW[1] = BTYEP;
+                bytesW[2] = BTYETX;
+                bytesW[3] = (byte) main_seekBar1.getProgress();
+                bytesW[4] = (byte) main_seekBar2.getProgress();
+                bytesW[5] = (byte) main_seekBar3.getProgress();
+                bytesW[6] = (byte) main_seekBar4.getProgress();
+                bytesW[7] = (byte) main_seekBar5.getProgress();
+                for (int i = 0; i < 8; i++) {
+                    bytesW[8] += bytesW[i];
+                }
+                sendData(bytesW, myApplication.getBluetoothSocket());
                 break;
-            case R.id.bt_main_receive:
-                Toast.makeText(MainActivity.this, "receive", Toast.LENGTH_SHORT).show();
-                clientReadRev();
+            case R.id.bt_main_receive://读取参数
+                Toast.makeText(MainActivity.this, "读取参数", Toast.LENGTH_SHORT).show();
+                bytesR[0] = READ;
+                bytesR[1] = BTYEP;//校验位
+                bytesR[2] = BTYERX;
+                bytesR[3] = (byte) (bytesR[0] + bytesR[1] + bytesR[2]);
+                sendData(bytesR, myApplication.getBluetoothSocket());
                 break;
 
             case R.id.action_a:
-                Intent backChooseDevice = new Intent(MainActivity.this,ChooseConnectDevice.class);
+                Intent backChooseDevice = new Intent(MainActivity.this, ChooseConnectDevice.class);
                 startActivity(backChooseDevice);
                 break;
             case R.id.action_b:
-                Intent flushMain = new Intent(MainActivity.this,MainActivity.class);
+                Intent flushMain = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(flushMain);
                 finish();
 
                 //Toast.makeText(MainActivity.this, "刷新！", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.action_d:
+                Toast.makeText(MainActivity.this, "uploading", Toast.LENGTH_SHORT).show();
+                break;
             default:
                 break;
         }
     }
+
     /**
      * 定义一帧数据格式
      */
-    private final byte READ = (byte)0x50, WRITE = (byte)0x51, BTYE1 = (byte)0x02, BTYE2 = (byte) 0x0A;
-    private byte [] bytes = new byte[4];
+    private final byte READ = (byte) 0x50, WRITE = (byte) 0x51, BTYEP = (byte) 0x02, BTYETX = (byte) 0x0B, BTYERX = (byte) 0x0A;
+    private byte[] bytesW = new byte[9];
+    private byte[] bytesR = new byte[4];
 
     public void sendData(byte byteData5, BluetoothSocket socket) {
         //this.sendData((byte) 0x00, byteData5, socket);
@@ -251,7 +294,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     // 取数据线程
     private class ReadReceiveThread extends Thread {
 
@@ -282,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         Message msg = handler.obtainMessage();
                         msg.obj = buf_data;
-                        msg.what = 4 ;
+                        msg.what = 4;
                         handler.sendMessage(msg);
 
                     }
@@ -290,14 +332,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (IOException e1) {
                 e1.printStackTrace();
                 Message msg = handler.obtainMessage();
-                msg.obj = "接收数据错误" ;
-                msg.what = 5 ;
+                msg.obj = "接收数据错误";
+                msg.what = 5;
                 handler.sendMessage(msg);
 
                 Log.e(TAG, "接收数据错误");
             } finally {
                 try {
-                    if(inputStream != null){
+                    if (inputStream != null) {
                         inputStream.close();
                     }
                 } catch (IOException e1) {
@@ -339,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i(TAG, "蓝牙已经打开");
         }
     }
+
     //弹出是否搜索蓝牙提示框
     void dialogDoSearch() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -460,7 +503,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 
 
     /**

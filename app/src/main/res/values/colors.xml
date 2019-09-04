@@ -4,10 +4,10 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorBackground">#6bb1df</color>
+    <color name="colorBackground">#5D9CC5</color>
     <color name="colorTitle">#f7f5f5</color>
     <color name="colorDeviceBackground">#898585</color>
-    <color name="colorSeekBarThumb">#783CE6</color>
-    <color name="colorSeekBarTrack">#A2C8E6</color>
+    <color name="colorSeekBarThumb">#233183</color>
+    <color name="colorSeekBarTrack">#6A9BC2</color>
     <color name="colorBlack">#130e0e</color>
 </resources>

@@ -59,7 +59,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">8dp</item>
-        <item name="android:textColor">@color/colorBackground</item>
+        <item name="android:textColor">@color/colorSeekBarThumb</item>
     </style>
     <style name="MyMainTextLay">
         <item name="android:layout_width">match_parent</item>
@@ -78,7 +78,7 @@
 
 
         <item name="bsb_always_show_bubble">false</item>
-        <item name="bsb_max">50.0</item>
+        <item name="bsb_max">20.0</item>
         <item name="bsb_min">0.0</item>
         <item name="bsb_auto_adjust_section_mark">true</item>
         <item name="bsb_show_section_text">true</item>
@@ -104,8 +104,20 @@
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginLeft">10dp</item>
     </style>
+
+
+    <style name="MyButton" parent="@style/WrapWrap">
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:background">@drawable/selector_btn_test</item><!---->
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
     <style name="menu_labels_style">
         <!--<item name="android:background">@drawable/ic_add_black_24dp</item>-->
         <item name="android:textColor">@color/colorBlack</item>
     </style>
+
 </resources>

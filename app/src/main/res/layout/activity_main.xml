@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/guide_backgroud2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -97,17 +98,19 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp">
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp">
             <Button
                 android:id="@+id/bt_main_send"
                 style="@style/MyExBt"
-                android:text="send"
+                android:text="设置参数"
                 android:visibility="invisible"/>
             <Button
                 android:id="@+id/bt_main_receive"
                 style="@style/MyExBt"
                 android:layout_toRightOf="@id/bt_main_send"
-                android:text="receive"
+                android:text="查看参数"
                 android:visibility="invisible"/>
         </RelativeLayout>
     </LinearLayout>
@@ -141,6 +144,13 @@
             app:fab_title="刷新"
             app:fab_colorNormal="@color/colorSeekBarTrack"
             app:fab_colorPressed="@color/colorSeekBarThumb"/>
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_title="上传参数"
+            app:fab_colorNormal="@color/colorSeekBarTrack"
+            app:fab_colorPressed="@color/colorSeekBarThumb" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

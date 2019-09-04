@@ -33,5 +33,7 @@ dependencies {
     //悬浮按钮
     //implementation 'com.github.wangfeng19930909:DragFloatingActionButton:1.0.1'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
+    //添加BGA依赖
+    implementation 'cn.bingoogolapple:bga-banner:2.2.6@aar'
 
 }
