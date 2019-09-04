@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/main_toolBar"
+            style="@style/MyTitle">
+
+            <TextView
+                android:id="@+id/main_toolBar_tv"
+                style="@style/MyTitleTextView2"
+                android:text="@string/mainBar_title" />
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout style="@style/MyMainTextLay">
+            <TextView
+                style="@style/MyMainText"
+                android:text="@string/can1" />
+            <com.xw.repo.BubbleSeekBar
+                android:id="@+id/main_seekBar1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:bsb_always_show_bubble="false"
+                app:bsb_auto_adjust_section_mark="true"
+                app:bsb_max="20.0"
+
+                app:bsb_min="0.0"
+                app:bsb_second_track_color="@color/colorSeekBarThumb"
+                app:bsb_section_count="20"
+                app:bsb_section_text_position="bottom_sides"
+                app:bsb_section_text_size="13dp"
+                app:bsb_seek_step_section="true"
+
+                app:bsb_show_progress_in_float="true"
+                app:bsb_show_section_mark="true"
+                app:bsb_show_section_text="true"
+
+                app:bsb_show_thumb_text="true"
+                app:bsb_thumb_color="@color/colorSeekBarThumb"
+                app:bsb_touch_to_seek="true"
+                app:bsb_track_color="@color/colorSeekBarTrack"
+                app:bsb_track_size="3dp" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMainTextLay">
+            <TextView
+                style="@style/MyMainText"
+                android:text="@string/can2" />
+
+            <com.xw.repo.BubbleSeekBar
+                android:id="@+id/main_seekBar2"
+                style="@style/MyMainSeekBar" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMainTextLay">
+
+            <TextView
+                style="@style/MyMainText"
+                android:text="@string/can3" />
+
+            <com.xw.repo.BubbleSeekBar
+                android:id="@+id/main_seekBar3"
+                style="@style/MyMainSeekBar" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMainTextLay">
+
+            <TextView
+                style="@style/MyMainText"
+                android:text="@string/can4" />
+
+            <com.xw.repo.BubbleSeekBar
+                android:id="@+id/main_seekBar4"
+                style="@style/MyMainSeekBar" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMainTextLay">
+
+            <TextView
+                style="@style/MyMainText"
+                android:text="@string/can5" />
+
+            <com.xw.repo.BubbleSeekBar
+                android:id="@+id/main_seekBar5"
+                style="@style/MyMainSeekBar" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp">
+            <Button
+                android:id="@+id/bt_main_send"
+                style="@style/MyExBt"
+                android:text="send"
+                android:visibility="invisible"/>
+            <Button
+                android:id="@+id/bt_main_receive"
+                style="@style/MyExBt"
+                android:layout_toRightOf="@id/bt_main_send"
+                android:text="receive"
+                android:visibility="invisible"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        app:fab_addButtonColorNormal="@color/colorBackground"
+        app:fab_addButtonColorPressed="@color/colorSeekBarThumb"
+        app:fab_addButtonPlusIconColor="@color/colorTitle"
+        app:fab_labelStyle="@style/menu_labels_style"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_title="蓝牙连接"
+            app:fab_colorNormal="@color/colorSeekBarTrack"
+            app:fab_colorPressed="@color/colorSeekBarThumb" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_title="刷新"
+            app:fab_colorNormal="@color/colorSeekBarTrack"
+            app:fab_colorPressed="@color/colorSeekBarThumb"/>
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+</RelativeLayout>

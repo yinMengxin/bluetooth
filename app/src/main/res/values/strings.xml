@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">GROUTING</string>
+
+    <string name="mainBar_title">接收 发送数据</string>
+    <string name="chooseDevice_title">请选择一个设备连接</string>
+
+    <string name="chooseDevice_tv_paired">已配对设备</string>
+    <string name="chooseDevice_tv_list">设备列表</string>
+    <string name="chooseDevice_tv_new">未配对设备</string>
+
+    <string name="can1">参数一</string>
+    <string name="can2">参数二</string>
+    <string name="can3">参数三</string>
+    <string name="can4">参数四</string>
+    <string name="can5">参数五</string>
+
+</resources>

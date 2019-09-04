@@ -1,0 +1,111 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MyAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+    </style>
+
+
+    <style name="MyTitle">
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@color/colorBackground</item>
+        <item name="title">@color/colorTitle</item>
+    </style>
+    <style name="MyTitleTextView2">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@color/colorBackground</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@color/colorTitle</item>
+        <item name="android:textSize">20sp</item>
+        <!--<item name="android:textStyle">bold</item>-->
+    </style>
+
+    <style name="MyTextSize">
+        <item name="android:textSize">19sp</item>
+    </style>
+    <style name="MyDeviceSubTitle" parent="MyTextSize">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorTitle</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:background">@color/colorDeviceBackground</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MyListView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:divider">@color/colorBackground</item>
+        <item name="android:dividerHeight">1px</item>
+        <item name="android:layout_margin">3dp</item>
+    </style>
+    <style name="MyListItemText" parent="MyTextSize">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+    <style name="MyMainText" >
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:textColor">@color/colorBackground</item>
+    </style>
+    <style name="MyMainTextLay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_marginTop">35dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+
+    </style>
+
+    <style name="MyMainSeekBar">
+        <item name="android:layout_width">match_parent</item>
+        <item  name="android:layout_height">wrap_content</item>
+        <item name="bsb_show_section_mark">true</item>
+
+
+        <item name="bsb_always_show_bubble">false</item>
+        <item name="bsb_max">50.0</item>
+        <item name="bsb_min">0.0</item>
+        <item name="bsb_auto_adjust_section_mark">true</item>
+        <item name="bsb_show_section_text">true</item>
+        <item name="bsb_section_text_size">13dp</item>
+        <item name="bsb_section_text_position">bottom_sides</item>
+        <item name="bsb_track_size">3dp</item>
+        <item name="bsb_show_thumb_text">true</item>
+        <item name="bsb_show_progress_in_float">true</item>
+        <item name="bsb_touch_to_seek">true</item>
+        <item name="bsb_thumb_color">@color/colorSeekBarThumb</item>
+        <item name="bsb_track_color">@color/colorSeekBarTrack</item>
+        <item name="bsb_second_track_color">@color/colorSeekBarThumb</item>
+        <item name="bsb_section_count">20</item>
+
+    </style>
+
+    <style name="MyExBt" parent="MyTextSize">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/colorTitle</item>
+        <!--<item name="android:strokeWidth">2dp</item>-->
+        <item name="android:background">@drawable/button_arc_shape</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+    </style>
+    <style name="menu_labels_style">
+        <!--<item name="android:background">@drawable/ic_add_black_24dp</item>-->
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
+</resources>
