@@ -220,8 +220,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 bytesW[7] = (byte) main_seekBar5.getProgress();
                 for (int i = 0; i < 8; i++) {
                     bytesW[8] += bytesW[i];
+                    Log.i(TAG, "onClick: send=="+ bytesW[i]);
                 }
+                Log.i(TAG, "onClick: send==="+ bytesW[8]);
                 sendData(bytesW, myApplication.getBluetoothSocket());
+                for(int k = 0 ; k < 9 ; k++ ){
+                    bytesW[k] = 0;//原数据清零
+                }
+//                for (int i = 0; i < 9; i++) {
+//                    Log.d(TAG, "onClick: send=clear="+ bytesW[i]);
+//                }
                 break;
             case R.id.bt_main_receive://读取参数
                 Toast.makeText(MainActivity.this, "读取参数", Toast.LENGTH_SHORT).show();
