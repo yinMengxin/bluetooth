@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.action_a:
                 Intent backChooseDevice = new Intent(MainActivity.this, ChooseConnectDevice.class);
-                startActivity(backChooseDevice);
+                startActivityForResult(backChooseDevice, REQUEST_CONNECT_DEVICE);
                 break;
             case R.id.action_b:
                 Intent flushMain = new Intent(MainActivity.this, MainActivity.class);
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             Log.e(TAG, "发送数据错误");
-            myApplication.closeBluetoothSocket();
+           // myApplication.closeBluetoothSocket();
         }
     }
 

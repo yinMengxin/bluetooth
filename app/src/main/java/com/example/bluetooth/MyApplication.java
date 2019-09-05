@@ -46,7 +46,9 @@ public class MyApplication extends Application {
     }
     public void closeBluetoothSocket(){
         try {
-            this.bluetoothSocket.close();
+            if(bluetoothSocket != null){
+                this.bluetoothSocket.close();
+            }
             this.bluetoothSocket = null;
         } catch (IOException e) {
             e.printStackTrace();

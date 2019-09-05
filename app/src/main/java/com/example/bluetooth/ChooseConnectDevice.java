@@ -39,7 +39,7 @@ public class ChooseConnectDevice extends AppCompatActivity {
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
     private Set<BluetoothDevice> pairedBluetoothSevice ;
 
-    private ListView lv_pairedDeviceListView, lv_newDeviceListView;
+    private ListView lv_pairedDeviceListView;//lv_newDeviceListView
     //标题栏
     private Toolbar mToolbar;
 
@@ -62,21 +62,22 @@ public class ChooseConnectDevice extends AppCompatActivity {
         //获取默认的蓝牙适配器
         mbluetoothAdapter = myApplication.getMbluetoothAdapter();
         //蓝牙搜索需要注册
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_FOUND);  //蓝牙搜索
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED); //蓝牙搜索结束
-        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED); //蓝牙设备状态改变
-        registerReceiver(mReceiver, filter);
+        //IntentFilter filter = new IntentFilter();
+       // filter.addAction(BluetoothDevice.ACTION_FOUND);  //蓝牙搜索
+       // filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED); //蓝牙搜索结束
+       // filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED); //蓝牙设备状态改变
+        //registerReceiver(mReceiver, filter);
 
 
         lv_pairedDeviceListView = (ListView) findViewById(R.id.lv_paired_deviceListView);
-        lv_newDeviceListView = (ListView) findViewById(R.id.lv_new_deviceListView);
+        //lv_newDeviceListView = (ListView) findViewById(R.id.lv_new_deviceListView);
 
         // 设定默认返回值为取消
         setResult(Activity.RESULT_CANCELED);
 
         if (mbluetoothAdapter.isEnabled()) {
             searchDevice();
+            //getSystemPairedDevice();
         } else {
             dialogOpenBluetooth();
         }
@@ -135,19 +136,19 @@ public class ChooseConnectDevice extends AppCompatActivity {
 
     //搜索蓝牙设备
     private void searchDevice() {
-        Toast.makeText(ChooseConnectDevice.this, "开始搜索请稍候", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "开始进行搜索");
+        //Toast.makeText(ChooseConnectDevice.this, "开始搜索请稍候", Toast.LENGTH_SHORT).show();
+        //Log.i(TAG, "开始进行搜索");
         // 初使化设备存储数组
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-        mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
+        //mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         lv_pairedDeviceListView.setAdapter(mPairedDevicesArrayAdapter);
 
 
-        lv_newDeviceListView.setAdapter(mNewDevicesArrayAdapter);
-        lv_newDeviceListView.setOnItemClickListener(mDeviceClickListener);
+        //lv_newDeviceListView.setAdapter(mNewDevicesArrayAdapter);
+       // lv_newDeviceListView.setOnItemClickListener(mDeviceClickListener);
         lv_pairedDeviceListView.setOnItemClickListener(mDeviceClickListener);
 
-        mbluetoothAdapter.startDiscovery();//搜索设备
+        //mbluetoothAdapter.startDiscovery();//搜索设备
 
         //获取系统已配对的蓝牙设备
         getSystemPairedDevice();
@@ -197,7 +198,7 @@ public class ChooseConnectDevice extends AppCompatActivity {
                     mNewDevicesArrayAdapter.add("没搜索到新的设备");
                 }
                 //解决scrollView只显示一行listView的问题
-                fixListViewHeight(lv_newDeviceListView);
+                //fixListViewHeight(lv_newDeviceListView);
                 Toast.makeText(ChooseConnectDevice.this, "搜索结束", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "设备搜索结束");
             }
@@ -230,10 +231,10 @@ public class ChooseConnectDevice extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         //解除注册
-        unregisterReceiver(mReceiver);
-        Log.e(TAG, "解除注册");
+//        unregisterReceiver(mReceiver);
+ //       Log.e(TAG, "解除注册");
         //取消扫描
-        myApplication.cancelDiscovery();
+ //       myApplication.cancelDiscovery();
     }
 
     //接收活动结果，响应startActivityForResult()
