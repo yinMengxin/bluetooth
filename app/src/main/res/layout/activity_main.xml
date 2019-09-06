@@ -135,7 +135,9 @@
             android:layout_height="wrap_content"
             app:fab_title="蓝牙连接"
             app:fab_colorNormal="@color/colorSeekBarTrack"
-            app:fab_colorPressed="@color/colorSeekBarThumb" />
+            app:fab_colorPressed="@color/colorSeekBarThumb"
+            app:fab_icon="@drawable/bluetooth"
+            app:fab_size="mini"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/action_b"
@@ -143,14 +145,18 @@
             android:layout_height="wrap_content"
             app:fab_title="刷新"
             app:fab_colorNormal="@color/colorSeekBarTrack"
-            app:fab_colorPressed="@color/colorSeekBarThumb"/>
+            app:fab_colorPressed="@color/colorSeekBarThumb"
+            app:fab_icon="@drawable/flush"
+            app:fab_size="mini"/>
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/action_d"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_title="上传参数"
             app:fab_colorNormal="@color/colorSeekBarTrack"
-            app:fab_colorPressed="@color/colorSeekBarThumb" />
+            app:fab_colorPressed="@color/colorSeekBarThumb"
+            app:fab_icon="@drawable/upload"
+            app:fab_size="mini"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

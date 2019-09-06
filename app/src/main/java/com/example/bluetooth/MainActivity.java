@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -82,8 +83,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     main_toolBar_tv.setText((String) msg.obj);
                     break;
                 case 4://接收蓝牙数据
+                    Log.i(TAG, "main : receive handler4=== " + msg.obj);
+                    //byte [] obj = (byte[]) msg.getData().getByteArray("obj");
+                    byte [] obj = (byte[]) msg.obj;
                     main_toolBar_tv.setText("当前设备：" + str_nowDeviceName);
-                    receiveDataAndShow((byte[]) msg.obj);
+                    Log.i(TAG, "main : receive handler4=== " + Arrays.toString(obj));
+                    if(obj != null){
+                        receiveDataAndShow(obj);
+                    }
                     break;
                 case 5://接收数据错误
                     main_toolBar_tv.setText((String) msg.obj);
@@ -97,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void receiveDataAndShow(byte[] obj) {
+
+        Log.i(TAG, "receiveDataAndShow: " + Arrays.toString(obj));
+        Log.i(TAG, "receiveDataAndShow: " +BTYEP+"==="+obj[1]+"==="+(BTYEP == obj[1]));
         if (BTYEP == obj[1]) {
             switch (obj[0]) {
                 case WRITE://设置参数的返回值
@@ -128,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         } else {
-            Toast.makeText(MainActivity.this, "数据格式发送错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "数据格式接收错误", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -171,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_main_send.setOnClickListener(this);
         bt_main_receive.setOnClickListener(this);
 
+        initData();
         if (mbluetoothAdapter.isEnabled()) {
             dialogDoSearch();
         } else {
@@ -179,25 +190,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void actionView_set() {
+        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
         final View actionB = findViewById(R.id.action_b);
         final FloatingActionButton actionD = (FloatingActionButton) findViewById(R.id.action_d);
-
         FloatingActionButton actionC = new FloatingActionButton(getBaseContext());
-        actionC.setTitle("隐藏/显示 按钮");
+        actionC.setTitle("隐藏/显示");
+        actionC.setIcon(R.drawable.show);
+
+
         actionC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bt_main_send.setVisibility(bt_main_send.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
                 bt_main_receive.setVisibility(bt_main_receive.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE: View.GONE);
-                actionD.setVisibility(actionD.getVisibility() == View.GONE ? View.VISIBLE: View.GONE);
+                //actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE: View.GONE);
+                //actionD.setVisibility(actionD.getVisibility() == View.GONE ? View.VISIBLE: View.GONE);
             }
         });
 
         final FloatingActionsMenu menuMultipleActions = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
         menuMultipleActions.addButton(actionC);
 
-        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
 
         actionA.setOnClickListener(this);
         actionB.setOnClickListener(this);
@@ -209,10 +222,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (view.getId()) {
             case R.id.bt_main_send://设置参数
-                Toast.makeText(MainActivity.this, "设置参数", Toast.LENGTH_SHORT).show();
-                bytesW[0] = WRITE;
-                bytesW[1] = BTYEP;
-                bytesW[2] = BTYETX;
+                //Toast.makeText(MainActivity.this, "设置参数", Toast.LENGTH_SHORT).show();
+
+                receiveFlag = WRITE;//设置接收‘设置参数’标志位
                 bytesW[3] = (byte) main_seekBar1.getProgress();
                 bytesW[4] = (byte) main_seekBar2.getProgress();
                 bytesW[5] = (byte) main_seekBar3.getProgress();
@@ -220,24 +232,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 bytesW[7] = (byte) main_seekBar5.getProgress();
                 for (int i = 0; i < 8; i++) {
                     bytesW[8] += bytesW[i];
-                    Log.i(TAG, "onClick: send=="+ bytesW[i]);
+                    //Log.i(TAG, "onClick: send=="+ bytesW[i]);
                 }
                 Log.i(TAG, "onClick: send==="+ bytesW[8]);
-                sendData(bytesW, myApplication.getBluetoothSocket());
-                for(int k = 0 ; k < 9 ; k++ ){
+                if(myApplication.getBluetoothSocket() != null){
+                    sendData(bytesW, myApplication.getBluetoothSocket());
+                }else {
+                    Toast.makeText(MainActivity.this,"设备未连接！",Toast.LENGTH_SHORT).show();
+                }
+                for(int k = 3 ; k < 9 ; k++ ){
                     bytesW[k] = 0;//原数据清零
                 }
-//                for (int i = 0; i < 9; i++) {
-//                    Log.d(TAG, "onClick: send=clear="+ bytesW[i]);
-//                }
                 break;
             case R.id.bt_main_receive://读取参数
-                Toast.makeText(MainActivity.this, "读取参数", Toast.LENGTH_SHORT).show();
-                bytesR[0] = READ;
-                bytesR[1] = BTYEP;//校验位
-                bytesR[2] = BTYERX;
-                bytesR[3] = (byte) (bytesR[0] + bytesR[1] + bytesR[2]);
-                sendData(bytesR, myApplication.getBluetoothSocket());
+                //Toast.makeText(MainActivity.this, "读取参数", Toast.LENGTH_SHORT).show();
+
+                receiveFlag =READ;//设置接收‘读取参数’标志位
+                if(myApplication.getBluetoothSocket() != null){
+                    sendData(bytesR, myApplication.getBluetoothSocket());
+                }else {
+                    Toast.makeText(MainActivity.this,"设备未连接！",Toast.LENGTH_SHORT).show();
+                }
+
                 break;
 
             case R.id.action_a:
@@ -263,13 +279,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 定义一帧数据格式
      */
     private final byte READ = (byte) 0x50, WRITE = (byte) 0x51, BTYEP = (byte) 0x02, BTYETX = (byte) 0x0B, BTYERX = (byte) 0x0A;
-    private byte[] bytesW = new byte[9];
-    private byte[] bytesR = new byte[4];
+    private int lenMin = 4;
+    private int lenMax = 9;
+    private byte[] bytesW = new byte[lenMax];
+    private byte[] bytesR = new byte[lenMin];
 
-    public void sendData(byte byteData5, BluetoothSocket socket) {
-        //this.sendData((byte) 0x00, byteData5, socket);
-        //sendData(bytData2, myApplication.getBluetoothSocket());
+    private byte[] receiveByteW = new byte[lenMin];
+    private byte[] receiveByteR = new byte[lenMax];
+    private byte receiveFlag;//设置发送数据的标志位
+    private int receiveIndex;//接收数据的下标
+    public void initData(){//初始化发送的字节数组
+        bytesR[0] = READ;
+        bytesR[1] = BTYEP;//校验位
+        bytesR[2] = BTYERX;
+        bytesR[3] = (byte) (bytesR[0] + bytesR[1] + bytesR[2]);
+
+        bytesW[0] = WRITE;
+        bytesW[1] = BTYEP;
+        bytesW[2] = BTYETX;
+        initReceiveData();
     }
+
+    public void initReceiveData(boolean isW){//是否是W
+        receiveIndex = 0;//接收下标清零
+        receiveFlag =0;//标志位清零
+        if(isW){
+            for(int q1 = 0 ; q1 < lenMin ; q1++){
+                receiveByteW[q1] = 0;//接收缓冲区清零
+            }
+        }else {
+            for(int q2 = 0 ; q2 < lenMax ; q2++){
+                receiveByteR[q2] = 0;//接收缓冲区清零
+            }
+        }
+    }
+    public void initReceiveData(){//是否是W
+        receiveIndex = 0;//接收下标清零
+        receiveFlag =0;//标志位清零
+        for(int q1 = 0 ; q1 < lenMin ; q1++){
+            receiveByteW[q1] = 0;//接收缓冲区清零
+        }
+        for(int q2 = 0 ; q2 < lenMax ; q2++){
+            receiveByteR[q2] = 0;//接收缓冲区清零
+        }
+
+    }
+
 
     public void sendData(byte[] byteData, BluetoothSocket socket) {
         try {
@@ -322,18 +377,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 while (true) {
                     if ((bytes = inputStream.read(buffer)) > 0) {
-                        byte[] buf_data = new byte[bytes];
+                       // Log.i(TAG, "read thread run: len ==="+ bytes);
                         for (int i = 0; i < bytes; i++) {
-                            buf_data[i] = buffer[i];
+                            //Log.i(TAG, "===一帧数据==="+i+"===="+buffer[i]);
+                            if(WRITE == receiveFlag ){//接收到的是‘设置参数’的回复
+                                receiveByteW[receiveIndex++] = buffer[i];
+                                if(receiveIndex == lenMin){//接收完毕
+
+//                                    Bundle mb = new Bundle();
+//                                    mb.putByteArray("obj",receiveByteW);
+                                    //byte [] rw = receiveByteW;
+                                    byte [] rw = new byte[4];
+                                    rw = receiveByteW.clone();
+
+                                    Message msg = handler.obtainMessage();
+                                    msg.obj = rw;
+                                    Log.i(TAG, "read thread run: " + Arrays.toString((byte [] )msg.obj));
+                                    //msg.setData(mb);
+                                    msg.what = 4;
+                                    handler.sendMessage(msg);//发送主线程处理
+
+                                    initReceiveData(true);//清空
+                                    //Log.i(TAG, "===after clear:"+Arrays.toString(receiveByteW));
+                                }
+                            }else if(READ == receiveFlag){//接收到的是‘读取参数’的回复
+                                receiveByteR[receiveIndex++] = buffer[i];
+                                if(receiveIndex == lenMax){
+
+                                    byte [] rr = new byte[9];
+                                    rr = receiveByteR.clone();
+
+                                    Message msg = handler.obtainMessage();
+                                    msg.obj = rr;
+                                    Log.i(TAG, "read thread run: " + Arrays.toString((byte [] )msg.obj));
+                                    msg.what = 4;
+                                    handler.sendMessage(msg);//发送主线程处理
+                                    initReceiveData(false);//清空
+                                }
+                            }
+
                         }
-                        String str = new String(buf_data);
-
-                        Log.i(TAG, "接收的数据是： " + str);
-
-                        Message msg = handler.obtainMessage();
-                        msg.obj = buf_data;
-                        msg.what = 4;
-                        handler.sendMessage(msg);
 
                     }
                 }
@@ -394,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void dialogDoSearch() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("提示");
-        builder.setMessage("是否进行设备扫描？");
+        builder.setMessage("请选择您需要调试的蓝牙设备");
         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -506,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void cancel() {
             if (myApplication.getBluetoothSocket() != null && myApplication.getBluetoothSocket().isConnected()) {
                 myApplication.closeBluetoothSocket();
-                myApplication.setBluetoothSocket(null);
+                //myApplication.setBluetoothSocket(null);
                 Log.i(TAG, "取消设备连接");
             }
         }
@@ -622,8 +705,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void onDestroy() {
-        super.onDestroy();
-        myApplication.cancelDiscovery();
-    }
+//    public void onDestroy() {
+//        super.onDestroy();
+//        myApplication.cancelDiscovery();
+//    }
 }

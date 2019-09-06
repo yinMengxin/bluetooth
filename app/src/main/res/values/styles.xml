@@ -117,7 +117,7 @@
 
     <style name="menu_labels_style">
         <!--<item name="android:background">@drawable/ic_add_black_24dp</item>-->
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">@color/colorTitle</item>
     </style>
 
 </resources>
