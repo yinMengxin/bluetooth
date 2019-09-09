@@ -96,13 +96,15 @@
     </style>
 
     <style name="MyExBt" parent="MyTextSize">
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_height">32dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/colorTitle</item>
         <!--<item name="android:strokeWidth">2dp</item>-->
         <item name="android:background">@drawable/button_arc_shape</item>
         <item name="android:layout_marginRight">20dp</item>
-        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
     </style>
 
 

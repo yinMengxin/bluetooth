@@ -50,14 +50,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ClientThread clientThread; //客户端蓝牙连接线程
 
     private TextView main_toolBar_tv;
-    //private FloatActionView actionView;
 
     private static final int REQUEST_ENABLE = 0x1; //请求能够打开蓝牙
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 0x2; //权限请求
     private final static int REQUEST_CONNECT_DEVICE = 0x3;    //宏定义查询设备句柄
 
     private com.xw.repo.BubbleSeekBar main_seekBar1, main_seekBar2, main_seekBar3, main_seekBar4, main_seekBar5;
-    private Button bt_main_send, bt_main_receive;
+    private Button bt_main_send, bt_main_receive, bt_main_save, bt_main_startOrEnd;
 
     private String str_nowDeviceName;
 
@@ -84,11 +83,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 4://接收蓝牙数据
                     Log.i(TAG, "main : receive handler4=== " + msg.obj);
-                    //byte [] obj = (byte[]) msg.getData().getByteArray("obj");
-                    byte [] obj = (byte[]) msg.obj;
+                    byte[] obj = (byte[]) msg.obj;
                     main_toolBar_tv.setText("当前设备：" + str_nowDeviceName);
                     Log.i(TAG, "main : receive handler4=== " + Arrays.toString(obj));
-                    if(obj != null){
+                    if (obj != null) {
                         receiveDataAndShow(obj);
                     }
                     break;
@@ -104,24 +102,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void receiveDataAndShow(byte[] obj) {
-
-        Log.i(TAG, "receiveDataAndShow: " + Arrays.toString(obj));
-        Log.i(TAG, "receiveDataAndShow: " +BTYEP+"==="+obj[1]+"==="+(BTYEP == obj[1]));
-        if (BTYEP == obj[1]) {
-            switch (obj[0]) {
-                case WRITE://设置参数的返回值
-                    if (BTYETX == obj[2] && (WRITE + BTYEP + BTYETX) == obj[3]) {
-                        Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case READ://读取参数的返回值
+        if (READ == obj[0]) {
+            switch (obj[2]) {
+                case BTYERX://读取参数的返回值
                     byte sum = 0;
                     for (int j = 0; j < 8; j++) {
                         sum += obj[j];
                     }
-                    if (BTYERX == obj[2] && sum == obj[8]) {//校验
+                    if ((lenMax-2)==obj[1] && sum == obj[8]) {//校验
                         main_seekBar1.setProgress(obj[3]);
                         main_seekBar2.setProgress(obj[4]);
                         main_seekBar3.setProgress(obj[5]);
@@ -133,10 +121,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
                     }
                     break;
+                case BTYERX_SAVE://保存参数返回值
+                    if ((READ + BTYEP_2 + BTYERX_SAVE) == obj[3]) {
+                        Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case BTYERX_START://启停返回值
+                    if ((READ + BTYEP_3 + BTYERX_SAVE + obj[3]) == obj[4]) {
+                        if(obj[3] == 0x00){//当前状态为转动
+                            bt_main_startOrEnd.setText("停止");
+                        }else if(obj[3] == 0x01){//当前状态为停止
+                            bt_main_startOrEnd.setText("启动");
+                        }
+                        Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
                 default:
                     break;
             }
 
+        }else if(WRITE == obj[0]){
+            if (BTYETX == obj[2] && (WRITE + BTYEP_2 + BTYETX) == obj[3]) {
+                Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(MainActivity.this, "数据格式接收错误", Toast.LENGTH_SHORT).show();
         }
@@ -176,10 +189,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         main_seekBar5 = (com.xw.repo.BubbleSeekBar) findViewById(R.id.main_seekBar5);
         bt_main_send = (Button) findViewById(R.id.bt_main_send);
         bt_main_receive = (Button) findViewById(R.id.bt_main_receive);
-
+        bt_main_save = (Button) findViewById(R.id.bt_main_save);
+        bt_main_startOrEnd = (Button) findViewById(R.id.bt_main_startOrEnd);
 
         bt_main_send.setOnClickListener(this);
         bt_main_receive.setOnClickListener(this);
+        bt_main_save.setOnClickListener(this);
+        bt_main_startOrEnd.setOnClickListener(this);
 
         initData();
         if (mbluetoothAdapter.isEnabled()) {
@@ -223,39 +239,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.bt_main_send://设置参数
                 //Toast.makeText(MainActivity.this, "设置参数", Toast.LENGTH_SHORT).show();
-
-                receiveFlag = WRITE;//设置接收‘设置参数’标志位
-                bytesW[3] = (byte) main_seekBar1.getProgress();
-                bytesW[4] = (byte) main_seekBar2.getProgress();
-                bytesW[5] = (byte) main_seekBar3.getProgress();
-                bytesW[6] = (byte) main_seekBar4.getProgress();
-                bytesW[7] = (byte) main_seekBar5.getProgress();
-                for (int i = 0; i < 8; i++) {
-                    bytesW[8] += bytesW[i];
-                    //Log.i(TAG, "onClick: send=="+ bytesW[i]);
-                }
-                Log.i(TAG, "onClick: send==="+ bytesW[8]);
-                if(myApplication.getBluetoothSocket() != null){
+                if (myApplication.getBluetoothSocket() != null) {
+                    receiveFlag = BTYETX;//设置接收‘设置参数’标志位
+                    bytesW[3] = (byte) main_seekBar1.getProgress();
+                    bytesW[4] = (byte) main_seekBar2.getProgress();
+                    bytesW[5] = (byte) main_seekBar3.getProgress();
+                    bytesW[6] = (byte) main_seekBar4.getProgress();
+                    bytesW[7] = (byte) main_seekBar5.getProgress();
+                    for (int i = 0; i < 8; i++) {
+                        bytesW[8] += bytesW[i];
+                    }
+                    // Log.i(TAG, "onClick: send===" + bytesW[8]);
                     sendData(bytesW, myApplication.getBluetoothSocket());
-                }else {
-                    Toast.makeText(MainActivity.this,"设备未连接！",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "设备未连接！", Toast.LENGTH_SHORT).show();
                 }
-                for(int k = 3 ; k < 9 ; k++ ){
+                for (int k = 3; k < 9; k++) {
                     bytesW[k] = 0;//原数据清零
                 }
                 break;
             case R.id.bt_main_receive://读取参数
-                //Toast.makeText(MainActivity.this, "读取参数", Toast.LENGTH_SHORT).show();
-
-                receiveFlag =READ;//设置接收‘读取参数’标志位
-                if(myApplication.getBluetoothSocket() != null){
+                if (myApplication.getBluetoothSocket() != null) {
+                    receiveFlag = BTYERX;//设置接收‘读取参数’标志位
                     sendData(bytesR, myApplication.getBluetoothSocket());
-                }else {
-                    Toast.makeText(MainActivity.this,"设备未连接！",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "设备未连接！", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
-
+            case R.id.bt_main_save:
+                if (myApplication.getBluetoothSocket() != null) {
+                    receiveFlag = BTYERX_SAVE;//设置接收‘保存参数’标志位
+                    sendData(bytesSave, myApplication.getBluetoothSocket());
+                } else {
+                    Toast.makeText(MainActivity.this, "设备未连接！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.bt_main_startOrEnd:
+                if (myApplication.getBluetoothSocket() != null) {
+                    receiveFlag = BTYERX_START;//设置接收‘保存参数’标志位
+                    sendData(bytesStart, myApplication.getBluetoothSocket());
+                } else {
+                    Toast.makeText(MainActivity.this, "设备未连接！", Toast.LENGTH_SHORT).show();
+                }
+                break;
             case R.id.action_a:
                 Intent backChooseDevice = new Intent(MainActivity.this, ChooseConnectDevice.class);
                 startActivityForResult(backChooseDevice, REQUEST_CONNECT_DEVICE);
@@ -264,8 +290,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent flushMain = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(flushMain);
                 finish();
-
-                //Toast.makeText(MainActivity.this, "刷新！", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_d:
                 Toast.makeText(MainActivity.this, "uploading", Toast.LENGTH_SHORT).show();
@@ -278,49 +302,93 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 定义一帧数据格式
      */
-    private final byte READ = (byte) 0x50, WRITE = (byte) 0x51, BTYEP = (byte) 0x02, BTYETX = (byte) 0x0B, BTYERX = (byte) 0x0A;
-    private int lenMin = 4;
+    private final byte READ = (byte) 0x50, WRITE = (byte) 0x51,
+            BTYEP_2 = (byte) 0x02, BTYEP_7 = (byte) 0x07, BTYEP_3 = (byte) 0x03,
+            BTYERX = (byte) 0x0A, BTYETX = (byte) 0x0B,
+            BTYERX_SAVE = (byte) 0x0C, BTYERX_START = (byte) 0x0D;
+    private int lenMin = 4, len_3 = 5;
     private int lenMax = 9;
-    private byte[] bytesW = new byte[lenMax];
+    //发送
     private byte[] bytesR = new byte[lenMin];
+    private byte[] bytesW = new byte[lenMax];
+    private byte[] bytesSave = new byte[lenMin];
+    private byte[] bytesStart = new byte[lenMin];
 
-    private byte[] receiveByteW = new byte[lenMin];
+
+    //接收
     private byte[] receiveByteR = new byte[lenMax];
+    private byte[] receiveByteW = new byte[lenMin];
+    private byte[] receiveByteSave = new byte[lenMin];
+    private byte[] receiveByteSart = new byte[len_3];
     private byte receiveFlag;//设置发送数据的标志位
     private int receiveIndex;//接收数据的下标
-    public void initData(){//初始化发送的字节数组
+
+    public void initData() {//初始化发送的字节数组
         bytesR[0] = READ;
-        bytesR[1] = BTYEP;//校验位
+        bytesR[1] = BTYEP_2;//校验位
         bytesR[2] = BTYERX;
         bytesR[3] = (byte) (bytesR[0] + bytesR[1] + bytesR[2]);
 
         bytesW[0] = WRITE;
-        bytesW[1] = BTYEP;
+        bytesW[1] = BTYEP_7;
         bytesW[2] = BTYETX;
+
+        bytesSave[0] = READ;
+        bytesSave[1] = BTYEP_2;
+        bytesSave[2] = BTYERX_SAVE;
+        bytesSave[3] = (byte) (bytesSave[0] + bytesSave[1] + bytesSave[2]);
+
+        bytesStart[0] = READ;
+        bytesStart[1] = BTYEP_2;
+        bytesStart[2] = BTYERX_START;
+        bytesStart[3] = (byte) (bytesStart[0] + bytesStart[1] + bytesStart[2]);
         initReceiveData();
     }
 
-    public void initReceiveData(boolean isW){//是否是W
+    public void initReceiveData(byte byteRx) {
         receiveIndex = 0;//接收下标清零
-        receiveFlag =0;//标志位清零
-        if(isW){
-            for(int q1 = 0 ; q1 < lenMin ; q1++){
-                receiveByteW[q1] = 0;//接收缓冲区清零
-            }
-        }else {
-            for(int q2 = 0 ; q2 < lenMax ; q2++){
-                receiveByteR[q2] = 0;//接收缓冲区清零
-            }
+        receiveFlag = 0;//标志位清零
+        switch (byteRx) {
+            case BTYERX:
+                for (int q2 = 0; q2 < lenMax; q2++) {
+                    receiveByteR[q2] = 0;//接收缓冲区清零
+                }
+                break;
+            case BTYETX:
+                for (int q1 = 0; q1 < lenMin; q1++) {
+                    receiveByteW[q1] = 0;//接收缓冲区清零
+                }
+                break;
+            case BTYERX_SAVE:
+                for (int q3 = 0; q3 < lenMin; q3++) {
+                    receiveByteSave[q3] = 0;
+                }
+                break;
+            case BTYERX_START:
+                for (int q4 = 0; q4 < len_3; q4++) {
+                    receiveByteSart[q4] = 0;
+                }
+                break;
+            default:
+                break;
+
         }
     }
-    public void initReceiveData(){//是否是W
+
+    public void initReceiveData() {//是否是W
         receiveIndex = 0;//接收下标清零
-        receiveFlag =0;//标志位清零
-        for(int q1 = 0 ; q1 < lenMin ; q1++){
+        receiveFlag = 0;//标志位清零
+        for (int q1 = 0; q1 < lenMin; q1++) {
             receiveByteW[q1] = 0;//接收缓冲区清零
         }
-        for(int q2 = 0 ; q2 < lenMax ; q2++){
+        for (int q2 = 0; q2 < lenMax; q2++) {
             receiveByteR[q2] = 0;//接收缓冲区清零
+        }
+        for (int q3 = 0; q3 < lenMin; q3++) {
+            receiveByteSave[q3] = 0;
+        }
+        for (int q4 = 0; q4 < len_3; q4++) {
+            receiveByteSart[q4] = 0;
         }
 
     }
@@ -345,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             Log.e(TAG, "发送数据错误");
-           // myApplication.closeBluetoothSocket();
+            // myApplication.closeBluetoothSocket();
         }
     }
 
@@ -377,47 +445,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 while (true) {
                     if ((bytes = inputStream.read(buffer)) > 0) {
-                       // Log.i(TAG, "read thread run: len ==="+ bytes);
+                        // Log.i(TAG, "read thread run: len ==="+ bytes);
                         for (int i = 0; i < bytes; i++) {
                             //Log.i(TAG, "===一帧数据==="+i+"===="+buffer[i]);
-                            if(WRITE == receiveFlag ){//接收到的是‘设置参数’的回复
-                                receiveByteW[receiveIndex++] = buffer[i];
-                                if(receiveIndex == lenMin){//接收完毕
+                            switch (receiveFlag) {
+                                case BTYETX://接收到的是‘设置参数’的回复
+                                    receiveByteW[receiveIndex++] = buffer[i];
+                                    if (receiveIndex == lenMin) {//接收完毕
+                                        byte[] rw = new byte[4];
+                                        rw = receiveByteW.clone();
 
-//                                    Bundle mb = new Bundle();
-//                                    mb.putByteArray("obj",receiveByteW);
-                                    //byte [] rw = receiveByteW;
-                                    byte [] rw = new byte[4];
-                                    rw = receiveByteW.clone();
+                                        Message msg = handler.obtainMessage();
+                                        msg.obj = rw;
+                                        Log.i(TAG, "read thread run: " + Arrays.toString((byte[]) msg.obj));
+                                        msg.what = 4;
+                                        handler.sendMessage(msg);//发送主线程处理
+                                        initReceiveData(BTYETX);//清空
+                                    }
+                                    break;
+                                case BTYERX:
+                                    receiveByteR[receiveIndex++] = buffer[i];
+                                    if (receiveIndex == lenMax) {
+                                        byte[] rr = new byte[9];
+                                        rr = receiveByteR.clone();
 
-                                    Message msg = handler.obtainMessage();
-                                    msg.obj = rw;
-                                    Log.i(TAG, "read thread run: " + Arrays.toString((byte [] )msg.obj));
-                                    //msg.setData(mb);
-                                    msg.what = 4;
-                                    handler.sendMessage(msg);//发送主线程处理
+                                        Message msg = handler.obtainMessage();
+                                        msg.obj = rr;
+                                        Log.i(TAG, "read thread run: " + Arrays.toString((byte[]) msg.obj));
+                                        msg.what = 4;
+                                        handler.sendMessage(msg);//发送主线程处理
+                                        initReceiveData(BTYERX);//清空
+                                    }
+                                    break;
+                                case BTYERX_SAVE:
+                                    receiveByteSave[receiveIndex++] = buffer[i];
+                                    if (receiveIndex == lenMin) {
+                                        byte[] rs = new byte[4];
+                                        rs = receiveByteSave.clone();
 
-                                    initReceiveData(true);//清空
-                                    //Log.i(TAG, "===after clear:"+Arrays.toString(receiveByteW));
-                                }
-                            }else if(READ == receiveFlag){//接收到的是‘读取参数’的回复
-                                receiveByteR[receiveIndex++] = buffer[i];
-                                if(receiveIndex == lenMax){
+                                        Message msg = handler.obtainMessage();
+                                        msg.obj = rs;
+                                        Log.i(TAG, "read thread run: " + Arrays.toString((byte[]) msg.obj));
+                                        msg.what = 4;
+                                        handler.sendMessage(msg);//发送主线程处理
+                                        initReceiveData(BTYERX_SAVE);//清空
+                                    }
+                                    break;
+                                case BTYERX_START:
+                                    receiveByteSart[receiveIndex++] = buffer[i];
+                                    if (receiveIndex == len_3) {
+                                        byte[] rsta = new byte[5];
+                                        rsta = receiveByteSart.clone();
 
-                                    byte [] rr = new byte[9];
-                                    rr = receiveByteR.clone();
-
-                                    Message msg = handler.obtainMessage();
-                                    msg.obj = rr;
-                                    Log.i(TAG, "read thread run: " + Arrays.toString((byte [] )msg.obj));
-                                    msg.what = 4;
-                                    handler.sendMessage(msg);//发送主线程处理
-                                    initReceiveData(false);//清空
-                                }
+                                        Message msg = handler.obtainMessage();
+                                        msg.obj = rsta;
+                                        Log.i(TAG, "read thread run: " + Arrays.toString((byte[]) msg.obj));
+                                        msg.what = 4;
+                                        handler.sendMessage(msg);//发送主线程处理
+                                        initReceiveData(BTYERX_START);//清空
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-
                         }
-
                     }
                 }
             } catch (IOException e1) {

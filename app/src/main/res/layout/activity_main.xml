@@ -104,15 +104,24 @@
             <Button
                 android:id="@+id/bt_main_send"
                 style="@style/MyExBt"
-                android:text="设置参数"
-                android:visibility="invisible"/>
+                android:text="设置参数" />
             <Button
                 android:id="@+id/bt_main_receive"
                 style="@style/MyExBt"
                 android:layout_toRightOf="@id/bt_main_send"
-                android:text="查看参数"
-                android:visibility="invisible"/>
+                android:text="查看参数" />
+            <Button
+                android:id="@+id/bt_main_save"
+                style="@style/MyExBt"
+                android:layout_toRightOf="@id/bt_main_receive"
+                android:text="保存参数"/>
+            <Button
+                android:id="@+id/bt_main_startOrEnd"
+                style="@style/MyExBt"
+                android:layout_below="@id/bt_main_send"
+                android:text="启动" />
         </RelativeLayout>
+
     </LinearLayout>
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/multiple_actions"
