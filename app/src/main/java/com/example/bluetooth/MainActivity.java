@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 3://蓝牙发送数据错误
                     main_toolBar_tv.setText((String) msg.obj);
+                    dialogDoSearch();
                     break;
                 case 4://接收蓝牙数据
                     Log.i(TAG, "main : receive handler4=== " + msg.obj);
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     break;
                 case BTYERX_START://启停返回值
-                    if ((READ + BTYEP_3 + BTYERX_SAVE + obj[3]) == obj[4]) {
+                    if ((READ + BTYEP_3 + BTYERX_START + obj[3]) == obj[4]) {
                         if(obj[3] == 0x00){//当前状态为转动
                             bt_main_startOrEnd.setText("停止");
                         }else if(obj[3] == 0x01){//当前状态为停止
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(MainActivity.this, "校验错误！请重新设置", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(MainActivity.this, "数据格式接收错误", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(MainActivity.this, "数据格式接收错误", Toast.LENGTH_SHORT).show();
         }
     }
 
