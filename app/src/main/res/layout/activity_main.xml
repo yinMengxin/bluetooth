@@ -102,23 +102,25 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="40dp">
             <Button
-                android:id="@+id/bt_main_send"
-                style="@style/MyExBt"
-                android:text="设置参数" />
-            <Button
                 android:id="@+id/bt_main_receive"
                 style="@style/MyExBt"
                 android:layout_toRightOf="@id/bt_main_send"
                 android:text="查看参数" />
             <Button
+                android:id="@+id/bt_main_send"
+                style="@style/MyExBt"
+                android:text="设置参数" />
+
+            <Button
                 android:id="@+id/bt_main_save"
                 style="@style/MyExBt"
-                android:layout_toRightOf="@id/bt_main_receive"
+                android:layout_below="@id/bt_main_send"
                 android:text="保存参数"/>
             <Button
                 android:id="@+id/bt_main_startOrEnd"
                 style="@style/MyExBt"
-                android:layout_below="@id/bt_main_send"
+                android:layout_below="@id/bt_main_receive"
+                android:layout_toRightOf="@id/bt_main_save"
                 android:text="启动" />
         </RelativeLayout>
 
@@ -138,6 +140,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp">
 
+        <!--
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/action_a"
             android:layout_width="wrap_content"
@@ -146,7 +149,7 @@
             app:fab_colorNormal="@color/colorSeekBarTrack"
             app:fab_colorPressed="@color/colorSeekBarThumb"
             app:fab_icon="@drawable/bluetooth"
-            app:fab_size="mini"/>
+            app:fab_size="mini"/>-->
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/action_b"

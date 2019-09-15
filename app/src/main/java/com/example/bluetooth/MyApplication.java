@@ -14,8 +14,8 @@ import java.util.UUID;
 
 public class MyApplication extends Application {
     private BluetoothAdapter mbluetoothAdapter;
-    private BluetoothDevice bluetoothDevice; //我们将要连接配对的设备
-    private BluetoothSocket bluetoothSocket; //蓝牙配对客户端的 socket
+    //private BluetoothDevice bluetoothDevice; //我们将要连接配对的设备
+    //private BluetoothSocket bluetoothSocket; //蓝牙配对客户端的 socket
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     public static UUID getMyUuid() {
@@ -30,7 +30,7 @@ public class MyApplication extends Application {
     public void setMbluetoothAdapter(BluetoothAdapter mbluetoothAdapter) {
         this.mbluetoothAdapter = mbluetoothAdapter;
     }
-
+/**
     public BluetoothDevice getBluetoothDevice() {
         return bluetoothDevice;
     }
@@ -58,6 +58,7 @@ public class MyApplication extends Application {
         }
     }
 
+ **/
     public void cancelDiscovery() {
         //取消搜索
         if (mbluetoothAdapter != null)

@@ -3,11 +3,8 @@ package com.example.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,7 +33,7 @@ public class ChooseConnectDevice extends AppCompatActivity {
     // 成员域
     private BluetoothAdapter mbluetoothAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
-    private ArrayAdapter<String> mNewDevicesArrayAdapter;
+    //private ArrayAdapter<String> mNewDevicesArrayAdapter;
     private Set<BluetoothDevice> pairedBluetoothSevice ;
 
     private ListView lv_pairedDeviceListView;//lv_newDeviceListView
@@ -166,6 +163,7 @@ public class ChooseConnectDevice extends AppCompatActivity {
         }
     }
 
+    /**
     //搜索蓝牙 需要进行广播接收 搜索到一个设备 接收到一个广播
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -204,7 +202,7 @@ public class ChooseConnectDevice extends AppCompatActivity {
             }
         }
     };
-
+**/
 
     public void fixListViewHeight(ListView listView) {
         // 如果没有设置数据适配器，则ListView没有子项，返回。
